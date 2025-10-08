@@ -31,11 +31,11 @@ CREATE TABLE Person(
     countryID INT,
     FOREIGN KEY (countryID) REFERENCES Country(countryID)
         ON DELETE SET NULL -- if a country is deleted, the countryID in Person is set to NULL
-        ON UPDATE CASCADE -- if a countryID is updated, all its persons are updated too 
+        ON UPDATE CASCADE, -- if a countryID is updated, all its persons are updated too 
     INDEX (fullName) -- to speed up searches by name
 );
 
---film festivals (Main festival information)
+-- film festivals (Main festival information)
 CREATE TABLE Festival(
     festivalID INT AUTO_INCREMENT,
     festivalName VARCHAR(100) NOT NULL UNIQUE,
@@ -57,7 +57,7 @@ CREATE TABLE Film(
     PRIMARY KEY (filmID),
     FOREIGN KEY (countryID) REFERENCES Country(countryID)
         ON DELETE SET NULL -- if a country is deleted, the countryID in Film is set to NULL
-        ON UPDATE CASCADE -- if a countryID is updated, all its films are updated too   
+        ON UPDATE CASCADE, -- if a countryID is updated, all its films are updated too   
     INDEX (title) -- to speed up searches by title
 );
 
@@ -81,7 +81,7 @@ CREATE TABLE FilmGenre(
     filmID INT,
     genreID INT,
     PRIMARY KEY (filmID, genreID),
-    FOREIGN KEY (filmID) REFERENCES Film(filmID),
+    FOREIGN KEY (filmID) REFERENCES Film(filmID)
         ON DELETE CASCADE -- if a film is deleted, all its genres are deleted too
         ON UPDATE CASCADE, -- if a filmID is updated, all its genres are updated
     FOREIGN KEY (genreID) REFERENCES Genre(genreID)
@@ -98,18 +98,18 @@ CREATE TABLE Nomination(
     personID INT, -- Null for film awards, NOT NUll for individual awards
     isWinner BOOLEAN DEFAULT FALSE, -- TRUE if the nomination won the award
     PRIMARY KEY (nominationID),
-    FOREIGN KEY (editionID) REFERENCES FestivalEdition(editionID),
-        ON DELETE CASCADE, -- if a festival edition is deleted, all its nominations are deleted too
+    FOREIGN KEY (editionID) REFERENCES FestivalEdition(editionID)
+        ON DELETE CASCADE -- if a festival edition is deleted, all its nominations are deleted too
         ON UPDATE CASCADE, -- if a festival editionID is updated, all its nominations are updated too
-    FOREIGN KEY (awardID) REFERENCES Award(awardID),
-        ON DELETE CASCADE, -- if a festival edition is deleted, all its nominations are deleted too
+    FOREIGN KEY (awardID) REFERENCES Award(awardID)
+        ON DELETE CASCADE -- if a festival edition is deleted, all its nominations are deleted too
         ON UPDATE CASCADE, -- if a festival editionID is updated, all its nominations are updated too
-    FOREIGN KEY (filmID) REFERENCES Film(filmID),
-        ON DELETE CASCADE, -- if a festival edition is deleted, all its nominations are deleted too
+    FOREIGN KEY (filmID) REFERENCES Film(filmID)
+        ON DELETE CASCADE -- if a festival edition is deleted, all its nominations are deleted too
         ON UPDATE CASCADE, -- if a festival editionID is updated, all its nominations are updated too
     FOREIGN KEY (personID) REFERENCES Person(personID)
-        ON DELETE CASCADE, -- if a festival edition is deleted, all its nominations are deleted too
-        ON UPDATE CASCADE, -- if a festival editionID is updated, all its nominations are updated too
+        ON DELETE CASCADE -- if a festival edition is deleted, all its nominations are deleted too
+        ON UPDATE CASCADE -- if a festival editionID is updated, all its nominations are updated too
 );
 
 
@@ -118,7 +118,7 @@ CREATE TABLE FilmDirector(
     filmID INT,
     personID INT,
     PRIMARY KEY (filmID, personID),
-    FOREIGN KEY (filmID) REFERENCES Film(filmID),
+    FOREIGN KEY (filmID) REFERENCES Film(filmID)
         ON DELETE CASCADE -- if a film is deleted, all its directors are deleted too
         ON UPDATE CASCADE, -- if a filmID is updated, all its directors are updated
     FOREIGN KEY (personID) REFERENCES Person(personID)
@@ -131,7 +131,7 @@ CREATE TABLE FilmActor(
     filmID INT,
     personID INT,
     PRIMARY KEY (filmID, personID),
-    FOREIGN KEY (filmID) REFERENCES Film(filmID),
+    FOREIGN KEY (filmID) REFERENCES Film(filmID)
         ON DELETE CASCADE -- if a film is deleted, all its actors are deleted too
         ON UPDATE CASCADE, -- if a filmID is updated, all its actors are updated
     FOREIGN KEY (personID) REFERENCES Person(personID)
