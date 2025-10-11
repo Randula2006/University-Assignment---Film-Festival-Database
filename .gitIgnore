@@ -2,3 +2,5 @@ full_data.csv
 the_oscar_award.csv
 Dataset.csv
 .env
+dataset_builder/
+__pycache__/
