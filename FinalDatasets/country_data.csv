@@ -1,0 +1,41 @@
+countryID,countryName,countryCode
+1,United States of America,USA
+2,United Kingdom,GBR
+3,France,FRA
+4,Germany,DEU
+5,Italy,ITA
+6,Japan,JPN
+7,Canada,CAN
+8,Australia,AUS
+9,Spain,ESP
+10,Mexico,MEX
+11,India,IND
+12,South Korea,KOR
+13,China,CHN
+14,New Zealand,NZL
+15,Sweden,SWE
+16,Denmark,DNK
+17,Ireland,IRL
+18,Poland,POL
+19,Austria,AUT
+20,Switzerland,CHE
+21,Belgium,BEL
+22,Hong Kong,HKG
+23,Taiwan,TWN
+24,Russian Federation,RUS
+25,Turkey,TUR
+26,Greece,GRC
+27,Vietnam,VNM
+28,Malaysia,MYS
+29,Hungary,HUN
+30,Czechia,CZE
+31,Ukraine,UKR
+32,Georgia,GEO
+33,Argentina,ARG
+34,Chile,CHL
+35,Thailand,THA
+36,Iran,IRN
+37,Romania,ROU
+38,Moldova,MDA
+39,Latvia,LVA
+40,Netherlands,NLD

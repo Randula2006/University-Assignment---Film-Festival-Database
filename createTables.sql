@@ -1,6 +1,11 @@
+-- Database Creation
+-- Database Source
+
+DROP DATABASE IF EXISTS Gunathilake_23610903;
+CREATE DATABASE Gunathilake_23610903;
+USE Gunathilake_23610903;
 
 -- TABLE CREATION 
-
 -- Countries (country information)
 CREATE TABLE Country(
     countryID INT AUTO_INCREMENT, -- there are no countrues with the same name -- so uniqe constraint can be used

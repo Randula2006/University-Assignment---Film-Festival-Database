@@ -1,0 +1,76 @@
+filmID,title,releaseYear,duration,countryID,rating
+1,Anatomy of a Fall,2023,152,3,7.7
+2,Poor Things,2023,141,17,7.9
+3,On the Adamant,2023,109,3,7.1
+4,Everything Everywhere All at Once,2022,139,1,7.8
+5,The Godfather,1972,175,1,9.2
+6,Citizen Kane,1941,119,1,8.3
+7,Pulp Fiction,1994,154,1,8.9
+8,Schindler's List,1993,195,1,9.0
+9,The Banshees of Inisherin,2022,114,17,7.7
+10,The Fabelmans,2022,151,1,7.6
+11,The Whale,2022,117,1,7.7
+12,Psycho,1960,109,1,8.5
+13,2001: A Space Odyssey,1968,149,2,8.3
+14,The Shining,1980,146,2,8.4
+15,A Clockwork Orange,1971,136,2,8.3
+16,Kramer vs. Kramer,1979,105,1,7.8
+17,Sophie's Choice,1982,150,1,7.5
+18,Forrest Gump,1994,142,1,8.8
+19,Cast Away,2000,143,1,7.8
+20,The Seventh Seal,1957,96,15,8.1
+21,8½,1963,138,5,8.0
+22,La Dolce Vita,1960,174,5,8.0
+23,The Searchers,1956,119,1,7.9
+24,Stagecoach,1939,96,1,7.8
+25,Seven Samurai,1954,207,6,8.6
+26,Rashomon,1950,88,6,8.2
+27,There Will Be Blood,2007,158,1,8.2
+28,Boogie Nights,1997,155,1,7.9
+29,Eraserhead,1977,89,1,7.3
+30,Blue Velvet,1986,120,1,7.7
+31,Annie Hall,1977,93,1,8.0
+32,Manhattan,1979,96,1,7.8
+33,Bringing Up Baby,1938,102,1,7.8
+34,His Girl Friday,1940,92,1,7.8
+35,Fargo,1996,98,1,8.1
+36,No Country for Old Men,2007,122,1,8.2
+37,Lawrence of Arabia,1962,228,2,8.3
+38,The Bridge on the River Kwai,1957,161,2,8.1
+39,Chinatown,1974,130,1,8.2
+40,The Apartment,1960,125,1,8.3
+41,Some Like It Hot,1959,121,1,8.2
+42,Se7en,1995,127,1,8.6
+43,Fight Club,1999,139,1,8.8
+44,Do the Right Thing,1989,120,1,8.0
+45,Malcolm X,1992,202,1,7.7
+46,Titanic,1997,194,1,7.9
+47,Avatar,2009,162,1,7.9
+48,Unforgiven,1992,131,1,8.2
+49,Million Dollar Baby,2004,132,1,8.1
+50,City Lights,1931,87,1,8.5
+51,The Great Dictator,1940,125,1,8.4
+52,Lost in Translation,2003,102,1,7.7
+53,The Virgin Suicides,1999,97,1,7.2
+54,It's a Wonderful Life,1946,130,1,8.6
+55,Mr. Smith Goes to Washington,1939,129,1,8.1
+56,The Philadelphia Story,1940,112,1,7.9
+57,Ben-Hur,1959,212,1,8.1
+58,The Dark Knight,2008,152,1,9.0
+59,Inception,2010,148,1,8.8
+60,On the Waterfront,1954,108,1,8.1
+61,The Lord of the Rings: The Return of the King,2003,201,14,9.0
+62,American Graffiti,1973,110,1,7.4
+63,Pan's Labyrinth,2006,118,10,8.2
+64,The Piano,1993,121,14,7.5
+65,The Hurt Locker,2008,131,1,7.5
+66,Gone with the Wind,1939,238,1,8.2
+67,The Wizard of Oz,1939,102,1,8.1
+68,The African Queen,1951,105,2,7.7
+69,The Grand Budapest Hotel,2014,99,1,8.1
+70,Spirited Away,2001,125,6,8.6
+71,Birdman,2014,119,1,7.7
+72,The Revenant,2015,156,1,8.0
+73,Roma,2018,135,10,7.7
+74,Gravity,2013,91,1,7.7
+75,Parasite,2019,132,12,8.5

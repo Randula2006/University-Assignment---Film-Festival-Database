@@ -1,0 +1,84 @@
+personID,fullName,birthDate,countryID
+1,Justine Triet,1978-07-17,3
+2,Sandra Hüller,1978-04-30,4
+3,Yorgos Lanthimos,1973-05-27,26
+4,Emma Stone,1988-11-06,1
+5,Nicolas Philibert,1951-01-10,3
+6,Daniel Kwan,1988-02-10,1
+7,Daniel Scheinert,1987-06-07,1
+8,Michelle Yeoh,1962-08-06,28
+9,Ke Huy Quan,1971-08-20,27
+10,Jamie Lee Curtis,1958-11-22,1
+11,Francis Ford Coppola,1939-04-07,1
+12,Marlon Brando,1924-04-03,1
+13,Al Pacino,1940-04-25,1
+14,Orson Welles,1915-05-06,1
+15,Quentin Tarantino,1963-03-27,1
+16,Steven Spielberg,1946-12-18,1
+17,Martin Scorsese,1942-11-17,1
+18,Anthony Hopkins,1937-12-31,2
+19,Brendan Fraser,1968-12-03,1
+20,Mark Ruffalo,1967-11-22,1
+21,Willem Dafoe,1955-07-22,1
+22,Swann Arlaud,1981-11-30,3
+23,Milo Machado Graner,2008-08-31,3
+24,Stephanie Hsu,1990-11-25,1
+25,James Hong,1929-02-22,1
+26,Alfred Hitchcock,1899-08-13,2
+27,Stanley Kubrick,1928-07-26,1
+28,Meryl Streep,1949-06-22,1
+29,Tom Hanks,1956-07-09,1
+30,Ingmar Bergman,1918-07-14,15
+31,Federico Fellini,1920-01-20,5
+32,John Ford,1894-02-01,1
+33,Akira Kurosawa,1910-03-23,6
+34,Paul Thomas Anderson,1970-06-26,1
+35,David Lynch,1946-01-20,1
+36,Woody Allen,1935-12-01,1
+37,Howard Hawks,1896-05-30,1
+38,Joel Coen,1954-11-29,1
+39,Ethan Coen,1957-09-21,1
+40,David Lean,1908-03-25,2
+41,Roman Polanski,1933-08-18,18
+42,Billy Wilder,1906-06-22,19
+43,David Fincher,1962-08-28,1
+44,Spike Lee,1957-03-20,1
+45,James Cameron,1954-08-16,7
+46,Clint Eastwood,1930-05-31,1
+47,Charlie Chaplin,1889-04-16,2
+48,Sofia Coppola,1971-05-14,1
+49,Frank Capra,1897-05-18,5
+50,George Cukor,1899-07-07,1
+51,William Wyler,1902-07-01,4
+52,Christopher Nolan,1970-07-30,2
+53,Elia Kazan,1909-09-07,25
+54,Peter Jackson,1961-10-31,14
+55,George Lucas,1944-05-14,1
+56,Guillermo del Toro,1964-10-09,10
+57,Jane Campion,1954-04-30,14
+58,Kathryn Bigelow,1951-11-27,1
+59,Laurence Olivier,1907-05-22,2
+60,Robert De Niro,1943-08-17,1
+61,Denzel Washington,1954-12-28,1
+62,Jack Nicholson,1937-04-22,1
+63,Daniel Day-Lewis,1957-04-29,2
+64,Leonardo DiCaprio,1974-11-11,1
+65,Dustin Hoffman,1937-08-08,1
+66,James Stewart,1908-05-20,1
+67,Morgan Freeman,1937-06-01,1
+68,Humphrey Bogart,1899-12-25,1
+69,Cary Grant,1904-01-18,2
+70,Sidney Poitier,1927-02-20,1
+71,Philip Seymour Hoffman,1967-07-23,1
+72,Katharine Hepburn,1907-05-12,1
+73,Bette Davis,1908-04-05,1
+74,Audrey Hepburn,1929-05-04,21
+75,Kate Winslet,1975-10-05,2
+76,Cate Blanchett,1969-05-14,8
+77,Victor Fleming,1889-02-23,1
+78,John Huston,1906-08-05,1
+79,Wes Anderson,1969-05-01,1
+80,Hayao Miyazaki,1941-01-05,6
+81,Alejandro G. Iñárritu,1963-08-15,10
+82,Alfonso Cuarón,1961-11-28,10
+83,Bong Joon Ho,1969-09-14,12
