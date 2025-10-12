@@ -134,3 +134,155 @@ def awards_with_best_in_name():
             connection.close()
             # log
             # print("MySQL connection is closed.")
+
+def film_duration(minutes):
+    #Function to query all festival edition in a specific year given by the user
+
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+            cursor = connection.cursor()
+
+            query = """
+                SELECT title, duration 
+                FROM film 
+                WHERE duration > %s 
+                ORDER BY duration DESC; 
+            """
+            cursor.execute(DB_usage) #use the specific database
+            cursor.execute(query, (minutes,)) #tuple with single value
+            results = cursor.fetchall()
+
+            # Determining the maximum length of the film titles for formatting
+            if results:
+                max_length_title = max(len(row[0]) for row in results) + 2
+            else:
+                max_length_title = 0#default value if no results
+            
+            print(f"Films longer than {minutes} minutes:")
+            print("====================================================================")
+            print("|                      Title                      |Duration (mins) |")
+            print("====================================================================")
+            for rows in results:
+                print(f"| {rows[0]:<{max_length_title}} |      {rows[1]}       |")
+            print("====================================================================")
+        else:
+            print("Failed to connect to the database.")
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            # log
+            # print("MySQL connection is closed.")
+
+def films_and_origin_country():
+    #Function to query all films and their origin countries
+
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+
+            cursor = connection.cursor()
+
+            query = """
+                SELECT f.title AS FilmName, f.releaseYear, c.countryName AS OriginCountry
+                FROM film as f INNER JOIN country AS c 
+                ON f.countryID = c.countryID
+                ORDER BY f.releaseYear DESC;
+            """
+
+            cursor.execute(DB_usage) #use the specific database
+            cursor.execute(query)
+            results = cursor.fetchall()
+            
+            # Determining the maximum length of the film titles for formatting
+            if results:
+                max_length_title = max(len(row[0]) for row in results) + 2
+                max_length_country = max(len(row[2]) for row in results) + 2
+            else:
+                max_length_title = 0#default value if no results
+                max_length_country = 0#default value if no results
+
+            print("Films and their Origin Countries:")
+            print("===============================================================================================")
+            print("|                   Film Name               | Release Year |            Origin Country        |")
+            print("===============================================================================================")
+            for rows in results:
+                print(f"| {rows[0]:<{max_length_title}} |     {rows[1]}     | {rows[2]:<{max_length_country}} |")
+            print("===============================================================================================")
+        else:
+            print("Failed to connect to the database.")
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            # log
+            # print("MySQL connection is closed.")
+
+def all_nominations_details():
+    #Function to query all nominations with film, person and award details
+    
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+            cursor = connection.cursor()
+
+            query = """
+                SELECT f.title AS FilmName, p.fullName AS PersonName, a.awardName , fe.festivalName, feE.year, n.isWinner
+                FROM nomination AS n INNER JOIN film AS f 
+                ON n.filmID = f.filmID 
+                LEFT JOIN person AS p ON
+                p.personID = n.personID
+                INNER JOIN award AS a ON
+                a.awardID = n.awardID
+                INNER JOIN festivalEdition AS feE ON
+                feE.editionID = n.editionID
+                INNER JOIN festival AS fe ON
+                fe.festivalID = feE.festivalID
+                ORDER BY feE.year DESC;   
+            """
+
+            cursor.execute(DB_usage) #use the specific database
+            cursor.execute(query)
+
+            results = cursor.fetchall()
+            # Determining the maximum length of the film titles for formatting
+            if results:
+                max_length_film = max(len(row[0]) if row[0] is not None else 0 for row in results) + 2
+                max_length_person = max(len(row[1]) if row[1] is not None else len("N/A") for row in results) + 2
+                max_length_award = max(len(row[2]) if row[2] is not None else 0 for row in results) + 2
+                max_length_festival = max(len(row[3]) if row[3] is not None else 0 for row in results) + 2
+                max_is_winner = len("Winner") + 3
+            else:
+                max_length_film = 0#default value if no results
+                max_length_person = 0#default value if no results
+                max_length_award = 0#default value if no results
+                max_length_festival = 0#default value if no results
+            
+            print("All Nominations with Film, Person and Award Details:")
+            print("=====================================================================================================================================================================================")
+            print("|             Film Name               |     Person Name    |                    Award Name                   |             Festival Name            | Edition Year |    Is Winner   |")
+            print("=====================================================================================================================================================================================")
+            for rows in results:
+                is_winner_text = "Yes" if rows[5] else "No"
+                person_name_text = rows[1] or "N/A"
+
+                print(f"| {rows[0]:<{max_length_film}} | {person_name_text:<{max_length_person}} | {rows[2]:<{max_length_award}} | {rows[3]:<{max_length_festival}} |     {rows[4]}     |   {is_winner_text:<{max_is_winner}}    |")
+            print("=====================================================================================================================================================================================")
+        else:
+            print("Failed to connect to the database.")
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            # log
+            # print("MySQL connection is closed.")
