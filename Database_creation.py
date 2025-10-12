@@ -19,7 +19,7 @@ DB_CONFIG = {
 
 # 2. Place all your CSV files in a single folder and update the path below.
 # replace it with the file path to the dataset folder
-CSV_BASE_PATH = './FinalDatasets/'
+CSV_BASE_PATH = os.getenv('FILE_PATH', './FinalDatasets/')
 
 # Dictionary mapping table names to their corresponding CSV files.
 CSV_FILES = {
@@ -189,3 +189,74 @@ def insert_data_into_db():
             connection.close()
             print("-MySQL connection is closed.\n")
     return
+
+#Views
+def create_view_AllWinners():
+    # Function to create a SQL view in the database.
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+            cursor = connection.cursor()
+
+            # Use the specific database
+            DB_usage = f"USE {DB_CONFIG['database']};"
+            cursor.execute(DB_usage)
+
+            # Drop the view if it already exists
+            delete_query = "DROP VIEW IF EXISTS AllWinners;"
+            cursor.execute(delete_query)
+
+            # Define the SQL for creating the view
+            query = """
+            CREATE VIEW AllWinners AS
+            SELECT f.title, p.fullName AS Person_FullName, a.awardName, fe.festivalName, feE.year
+            FROM nomination AS n
+            INNER JOIN film AS f ON n.filmID = f.filmID
+            INNER JOIN person AS p ON n.personID = p.personID
+            INNER JOIN award AS a ON n.awardID = a.awardID
+            INNER JOIN festivalEdition AS feE ON n.editionID = feE.editionID
+            INNER JOIN festival AS fe ON feE.festivalID = fe.festivalID
+            WHERE n.isWinner = TRUE;
+            """
+        
+            cursor.execute(query)
+            connection.commit()
+            print("-View 'AllWinners' created successfully.")
+            cursor.close()
+            connection.close() # close the connection
+    except Error as e:
+        print(f"Error creating view: {e}")
+
+def create_view_FilmSummary():
+    #Function to create a SQL view in the database.
+
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+            cursor = connection.cursor()
+
+            # Use the specific database
+            DB_usage = f"USE {DB_CONFIG['database']};"
+            cursor.execute(DB_usage)
+            # Drop the view if it already exists
+            delete_query = "DROP VIEW IF EXISTS FilmSummary;"
+            cursor.execute(delete_query)
+
+            # Define the SQL for creating the view
+            # This view provides a summary of films with their genres, directors, and actors.
+            query = """
+                    CREATE VIEW FilmSummary AS
+                    SELECT f.title as FilmTitle, COUNT(n.nominationID) AS TotalNominations, COUNT(CASE WHEN n.isWinner = TRUE THEN 1 END) AS TotalWins
+                    FROM film AS f LEFT JOIN nomination AS n ON f.filmID = n.filmID
+                    GROUP BY f.filmID;
+                    """
+            cursor.execute(query)
+            connection.commit()
+            print("-View 'FilmSummary' created successfully.")
+            cursor.close()
+            connection.close() # close the connection
+    except Error as e:
+        print(f"Error creating view: {e}")
+

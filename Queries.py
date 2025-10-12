@@ -813,3 +813,90 @@ def directors_without_best_director_award():
             connection.close()
             # log
             # print("MySQL connection is closed.")
+
+def show_all_winners():
+    #Function to display all winners from the view
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+
+            cursor = connection.cursor()
+
+            query = "SELECT * FROM AllWinners ORDER BY year DESC;"
+
+            cursor.execute(DB_usage) #use the specific database
+            cursor.execute(query)
+            results = cursor.fetchall()
+
+            # Determining the maximum length of the film titles and person names for formatting
+            if results:
+                max_length_film = max(len(row[0]) for row in results) + 2
+                max_length_person = max(len(row[1]) for row in results) + 2
+                max_length_award = max(len(row[2]) for row in results) + 2
+                max_length_festival = max(len(row[3]) for row in results) + 2
+            else:
+                max_length_film = 0#default value if no results
+                max_length_person = 0#default value if no results
+                max_length_award = 0#default value if no results
+                max_length_festival = 0#default value if no results
+
+            print("All Winners from the View:")
+            print("===================================================================================================================================================")
+            print("|             Film Name               |     Person Name    |                   Award Name                 |      Festival Name     | Edition Year |")
+            print("===================================================================================================================================================")
+            for rows in results:
+                print(f"| {rows[0]:<{max_length_film}} | {rows[1]:<{max_length_person}} | {rows[2]:<{max_length_award}} | {rows[3]:<{max_length_festival}} |     {rows[4]}     |")
+            print("===================================================================================================================================================")
+        else:
+            print("Failed to connect to the database.")
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            # log
+            # print("MySQL connection is closed.")
+
+def show_summary_of_films():
+    #Function to display summery of films from the view
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+
+            cursor = connection.cursor()
+
+            query = "SELECT * FROM FilmSummary ORDER BY TotalNominations DESC;"
+
+            cursor.execute(DB_usage) #use the specific database
+            cursor.execute(query)
+            results = cursor.fetchall()
+
+            # Determining the maximum length of the film titles and country names for formatting
+            if results:
+                max_length_film = max(len(row[0]) for row in results) + 2
+            else:
+                max_length_film = 0#default value if no results
+
+            print("Summery of Films from the View:")
+            print("=============================================================================================")
+            print("|                Film Name                        | Total Nominations |  Total Awards Won   |")
+            print("=============================================================================================")
+            for rows in results:
+                print(f"| {rows[0]:<{max_length_film}} |         {rows[1]}         |          {rows[2]}          | ")
+            print("=============================================================================================")
+        else:
+            print("Failed to connect to the database.")
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            # log
+            # print("MySQL connection is closed.")
+
+
+

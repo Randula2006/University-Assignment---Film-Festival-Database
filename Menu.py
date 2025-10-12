@@ -31,6 +31,9 @@ def Menu():
     print("16. Sub-Query: Actors who starred in Palme d'Or winning films")
     print("17. Festival where a specific Film was nominated")
     print("18. Director who have not won 'Best Director' award")
+    print("-----------------------")
+    print("19. View: Show all Winners")
+    print("20. View: Show Summery of Films")
     print("18. Exit")
     print("Please select an option (1-5): ")
     choice = int(input())
@@ -51,6 +54,8 @@ def switch_case_menu(choice, SQL_File):
         # Call the function to create the database and insert data
         Database_creation.create_database(SQL_File)
         Database_creation.insert_data_into_db()
+        Database_creation.create_view_AllWinners()
+        Database_creation.create_view_FilmSummary()
         return False #continue the loop
 
     elif choice == 1:
@@ -160,9 +165,20 @@ def switch_case_menu(choice, SQL_File):
         return False #continue the loop
     
     elif choice == 19:
+        print("View: Show all Winners selected.")
+        # Call the function to display all winners from the view
+        Queries.show_all_winners()
+        return False #continue the loop
+    
+    elif choice == 20:
+        print("View: Show Summery of Films selected.")
+        # Call the function to display summery of films from the view
+        Queries.show_summary_of_films()
+        return False #continue the loop
+    
+    elif choice == 21:
         print("Exiting the program. Goodbye!")
         return True #exit the loop
-
     else:
         print("Invalid choice. Please select a valid option (1-5).")
         return False #continue the loop
