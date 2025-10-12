@@ -13,6 +13,7 @@ def Menu():
     print("1. Insert data into the database")
     print("2. Query: All films and their release year")
     print("3. Query: Find all persons born after a given year")
+    print("4. Query: Awards with 'Best' in their name")
     print("5. Exit")
     print("Please select an option (1-5): ")
     choice = int(input())
@@ -47,13 +48,15 @@ def switch_case_menu(choice, SQL_File):
     
     elif choice == 3:
         input_year = int(input("Enter the year to find persons born after that year: "))
-
+        # Call the function to query persons born after the given year
         Queries.people_born_after_year(input_year)
         return False #continue the loop
+    
     elif choice == 4:
-        print("Update data in the database selected.")
-        # Call the function to update data
-        # update_data()
+        print("Query Awards with 'Best' in their name selected.")
+        # Call the function to query awards with 'Best' in their name
+        Queries.awards_with_best_in_name()
+        return False #continue the loop
     elif choice == 5:
         print("Exiting the program.")
         exit(0)

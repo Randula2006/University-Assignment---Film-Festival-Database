@@ -96,3 +96,41 @@ def people_born_after_year(year):
             # log
             # print("MySQL connection is closed.")
         
+def awards_with_best_in_name():
+    #Function to query all awards with "Best" in their name
+
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+            cursor = connection.cursor()
+
+            query = "SELECT awardName from award WHERE awardName LIKE '%Best%';"
+
+            cursor.execute(DB_usage) #use the specific database
+            cursor.execute(query)
+            results = cursor.fetchall()
+
+            # Determining the maximum length of the award names for formatting
+            if results:
+                max_length_award = max(len(row[0]) for row in results) + 2
+            else:
+                max_length_award = 0#default value if no results
+
+            print("Awards with 'Best' in their name:")
+            print("===================================================")
+            print("|                 Award Name                      |")
+            print("===================================================")
+            for rows in results:
+                print(f"| {rows[0]:<{max_length_award}} |")
+            print("===================================================")
+        else:
+            print("Failed to connect to the database.")
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            # log
+            # print("MySQL connection is closed.")
