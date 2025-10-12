@@ -25,7 +25,13 @@ def Menu():
     print("11. Aggregate-Query: Number of nomination per film")
     print("12. Aggregate-Query: Avarage duration of films per genre")
     print("13. Aggregate-Query: Awards given out by each festival edition")
-    print("12. Exit")
+    print("-----------------------")
+    print("14. Sub-Query: Films longer than the avarage duration")
+    print("15. Sub-Query: Direcotrs of award winning films")
+    print("16. Sub-Query: Actors who starred in Palme d'Or winning films")
+    print("17. Festival where a specific Film was nominated")
+    print("18. Director who have not won 'Best Director' award")
+    print("18. Exit")
     print("Please select an option (1-5): ")
     choice = int(input())
     
@@ -124,8 +130,39 @@ def switch_case_menu(choice, SQL_File):
         return False #continue the loop
     
     elif choice == 14:
+        print("Query Films longer than the average duration selected.")
+        # Call the function to query persons with multiple awards
+        Queries.films_longer_than_average_duration()
+        return False #continue the loop
+    
+    elif choice == 15:
+        print("Query Directors of award winning films selected.")
+        # Call the function to query directors of award winning films
+        Queries.directors_of_award_winning_films()
+        return False #continue the loop
+    
+    elif choice == 16:
+        print("Query Actors who starred in Palme d'Or winning films selected.")
+        # Call the function to query actors who starred in Palme d'Or winning films
+        Queries.actors_in_palme_dor_winning_films()
+        return False #continue the loop
+    
+    elif choice == 17:
+        input_film = input("Enter the film title to find the festival where it was nominated: ")
+        # Call the function to query festival where a specific film was nominated
+        Queries.festival_where_film_nominated(input_film)
+        return False #continue the loop
+    
+    elif choice == 18:
+        print("Query Directors who have not won 'Best Director' award selected.")
+        # Call the function to query directors who have not won 'Best Director' award
+        Queries.directors_without_best_director_award()
+        return False #continue the loop
+    
+    elif choice == 19:
         print("Exiting the program. Goodbye!")
         return True #exit the loop
+
     else:
         print("Invalid choice. Please select a valid option (1-5).")
         return False #continue the loop

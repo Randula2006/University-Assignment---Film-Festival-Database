@@ -565,4 +565,251 @@ def awards_given_out_by_festival_edition():
             # log
             # print("MySQL connection is closed.")
 
-    
+def films_longer_than_average_duration():
+    #Function to query films longer than the average duration
+
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+            cursor = connection.cursor()
+
+            query = """
+                    SELECT title, duration
+                    FROM film
+                    WHERE duration > (SELECT AVG(duration) FROM film)
+                    ORDER BY duration DESC;
+            """
+            cursor.execute(DB_usage) #use the specific database
+            cursor.execute(query)
+
+            results = cursor.fetchall()
+
+            # Determining the maximum length of the film titles for formatting
+            if results:
+                max_length_title = max(len(row[0]) for row in results) + 2
+            else:
+                max_length_title = 0#default value if no results
+
+            print("Films Longer than the Average Duration:")
+            print("===============================================================")
+            print("|                    Film Title                   | Duration  |")
+            print("===============================================================")
+            for rows in results:
+                print(f"| {rows[0]:<{max_length_title}} |    {rows[1]}    |")
+            print("===============================================================")
+        else:
+            print("Failed to connect to the database.")
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            # log
+            # print("MySQL connection is closed.")
+
+def directors_of_award_winning_films():
+    #Function to query directors of award winning films that has won at least one award
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+
+            cursor = connection.cursor()
+
+            query = """
+                    SELECT DISTINCT p.fullName AS DirectorName
+                    FROM person AS p INNER JOIN filmDirector AS fd
+                    ON p.personID = fd.personID
+                    WHERE fd.filmID IN (
+                        SELECT DISTINCT n.filmID
+                        FROM nomination AS n
+                        WHERE n.isWinner = TRUE
+                    )
+                    ORDER BY p.fullName;
+            """
+
+            cursor.execute(DB_usage) #use the specific database
+            cursor.execute(query)
+            results = cursor.fetchall()
+
+            # Determining the maximum length of the director names for formatting
+            if results:
+                max_length_director = max(len(row[0]) for row in results) + 2
+            else:
+                max_length_director = 0#default value if no results
+
+            print("Directors of Award Winning Films:")
+            print("==========================")
+            print("|     Director Name      |")
+            print("==========================")
+            for rows in results:
+                print(f"| {rows[0]:<{max_length_director}} |")
+            print("==========================")
+        else:
+            print("Failed to connect to the database.")
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            # log
+            # print("MySQL connection is closed.")    
+
+def actors_in_palme_dor_winning_films():
+    #Function to query actors who starred in Palme d'Or winning films
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+
+            cursor = connection.cursor()
+
+            query = """
+                    SELECT DISTINCT p.fullName AS ActorName, f.title AS FilmName
+                    FROM person AS p 
+                    INNER JOIN filmActor AS fa ON p.personID = fa.personID
+                    INNER JOIN film AS f ON fa.filmID = f.filmID
+                    WHERE fa.filmID IN (
+                        SELECT DISTINCT n.filmID
+                        FROM nomination AS n INNER JOIN award AS a
+                        ON n.awardID = a.awardID
+                        WHERE a.awardName = "Palme d'Or" AND n.isWinner = TRUE
+                    )
+                    ORDER BY p.fullName, f.title;
+            """
+
+            cursor.execute(DB_usage) #use the specific database
+            cursor.execute(query)
+            results = cursor.fetchall()
+
+            # Determining the maximum length of the actor names for formatting
+            if results:
+                max_length_actor = max(len(row[0]) for row in results) + 2
+                max_length_film = max(len(row[1]) for row in results) + 2
+            else:
+                max_length_actor = 0#default value if no results
+                max_length_film = 0#default value if no results
+
+            print("Actors who starred in Palme d'Or Winning Films:")
+            print("================================================")
+            print("|      Actor Name        |      Film Name      |")
+            print("================================================")
+            for rows in results:
+                print(f"| {rows[0]:<{max_length_actor}}  | {rows[1]:<{max_length_film}} |")
+            print("================================================")
+        else:
+            print("Failed to connect to the database.")
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            # log
+            # print("MySQL connection is closed.")
+
+def festival_where_film_nominated(film_title):
+    #Function to query festival where a specific film was nominated by the user
+
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+            cursor = connection.cursor()
+
+            query = """
+                    SELECT DISTINCT fe.festivalName, feE.year
+                    FROM festival AS fe 
+                    INNER JOIN festivalEdition AS feE ON fe.festivalID = feE.festivalID
+                    WHERE feE.editionID IN (
+                        SELECT n.editionID 
+                        FROM nomination AS n
+                        INNER JOIN film AS f ON n.filmID = f.filmID
+                        WHERE f.title = %s
+                    )
+                    ORDER BY feE.year DESC;
+            """
+
+            cursor.execute(DB_usage) #use the specific database
+            cursor.execute(query, (film_title,)) #tuple with single value
+
+            results = cursor.fetchall()
+
+            # Determining the maximum length of the festival names for formatting
+            if results:
+                max_length_festival = max(len(row[0]) for row in results) + 2
+            else:
+                max_length_festival = 0 #default value if no results
+
+            print(f"Festivals where the film '{film_title}' was nominated:")
+            print("=====================================================")
+            print("|           Festival Name           | Edition Year  |")
+            print("=====================================================")
+            for rows in results:
+                print(f"| {rows[0]:<{max_length_festival}} |     {rows[1]}     |")
+            print("=====================================================")
+        else:
+            print("Failed to connect to the database.")
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            # log
+            # print("MySQL connection is closed.")
+
+def directors_without_best_director_award():
+    #Function to query directors who have not won 'Best Director' award
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+
+            cursor = connection.cursor()
+
+            query = """
+                    SELECT DISTINCT p.fullName AS DirectorName
+                    FROM person AS p INNER JOIN filmDirector AS fd
+                    ON p.personID = fd.personID
+                    WHERE NOT EXISTS (
+                        SELECT 1
+                        FROM nomination AS n INNER JOIN award AS a
+                        ON n.awardID = a.awardID
+                        WHERE a.awardName = 'Best Director' 
+                        AND n.isWinner = TRUE
+                        AND n.personID = p.personID
+                    )
+                    ORDER BY p.fullName;
+            """
+
+            cursor.execute(DB_usage) #use the specific database
+            cursor.execute(query)
+            results = cursor.fetchall()
+
+            # Determining the maximum length of the director names for formatting
+            if results:
+                max_length_director = max(len(row[0]) for row in results) + 2
+            else:
+                max_length_director = 0#default value if no results
+
+            print("Directors who have not won 'Best Director' Award:")
+            print("===========================")
+            print("|     Director Name       |")
+            print("===========================")
+            for rows in results:
+                print(f"| {rows[0]:<{max_length_director}} |")
+            print("===========================")
+        else:
+            print("Failed to connect to the database.")
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            # log
+            # print("MySQL connection is closed.")
