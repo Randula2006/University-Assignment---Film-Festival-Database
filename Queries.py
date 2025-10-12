@@ -286,3 +286,283 @@ def all_nominations_details():
             connection.close()
             # log
             # print("MySQL connection is closed.")
+
+def directors_and_their_films():
+    #Function to query all directors and their films
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+            cursor = connection.cursor()
+
+            query = """
+                SELECT p.fullName AS DirectorName, f.title AS FilmName
+                FROM filmDirector AS fd INNER JOIN person AS p ON
+                p.personID = fd.personID
+                INNER JOIN film AS f ON
+                f.filmID = fd.filmID
+                ORDER BY p.fullName;
+            """
+
+            cursor.execute(DB_usage) #use the specific database
+            cursor.execute(query)
+            results = cursor.fetchall()
+
+            # Determining the maximum length of the director names and film titles for formatting
+            if results:
+                max_length_director = max(len(row[0]) for row in results) + 2
+                max_length_film = max(len(row[1]) for row in results) + 2
+            else:
+                max_length_director = 0#default value if no results
+                max_length_film = 0#default value if no results
+            
+            print("Directors and their Films:")
+            print("=============================================================================")
+            print("|      Director Name      |                   Film Name                     |")
+            print("=============================================================================")
+            for rows in results:
+                print(f"| {rows[0]:<{max_length_director}} | {rows[1]:<{max_length_film}} |")
+            print("=============================================================================")
+        else:
+            print("Failed to connect to the database.")
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            # log
+            # print("MySQL connection is closed.")
+
+def actors_in_film(film_title):
+    #Function to query all actors in a given film by the user
+
+    try: 
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+
+            cursor = connection.cursor()
+
+            query = """
+                    SELECT p.fullName AS ActorName, f.title AS FilmTitle
+                    FROM filmactor AS fa INNER JOIN person AS p
+                    ON fa.personID = p.personID
+                    INNER JOIN film AS f
+                    ON fa.filmID = f.filmID
+                    WHERE f.title = %s;
+                """
+            
+            cursor.execute(DB_usage) #use the specific database
+            cursor.execute(query, (film_title,)) #tuple with single value
+            results = cursor.fetchall()
+
+            # Determining the maximum length of the actor names for formatting
+            if results:
+                max_length_actor = max(len(row[0]) for row in results) + 2
+            else:
+                max_length_actor = 0#default value if no results
+
+            print(f"Actors in the film '{film_title}':")
+            print("===================================")
+            print("|     Actor Name   |  Film Title  |")
+            print("===================================")
+            for rows in results:
+                print(f"| {rows[0]:<{max_length_actor}} | {rows[1]} |")
+            print("===================================")
+        else:
+            print("Failed to connect to the database.")
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            # log
+            # print("MySQL connection is closed.")
+
+def total_number_of_films_per_country():
+    #Function to query total number of films per country
+
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+            cursor = connection.cursor()
+
+            query = """
+                SELECT c.countryName, COUNT(f.filmID) AS TotalFilms
+                FROM country AS c LEFT JOIN film as f
+                ON c.countryID = f.countryID
+                GROUP BY c.countryName
+                ORDER BY TotalFilms DESC;
+                """
+
+            cursor.execute(DB_usage) #use the specific database
+            cursor.execute(query)
+
+            results = cursor.fetchall()
+
+            # Determining the maximum length of the country names for formatting
+            if results:
+                max_length_country = max(len(row[0]) for row in results) + 1
+            else:
+                max_length_country = 0#default value if no results
+            print("Total Number of Films per Country:")
+            print("===================================================")
+            print("|        Country Name       |Total Number of Films|")
+            print("===================================================")
+            for rows in results:
+                print(f"| {rows[0]:<{max_length_country}} |          {rows[1]}          |")
+            print("===================================================")
+        else:
+            print("Failed to connect to the database.")
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            # log
+            # print("MySQL connection is closed.")
+
+def number_of_nominations_per_film():
+    #Function to query number of nomination per film
+
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+            cursor = connection.cursor()
+
+            query = """
+                    SELECT f.title AS FilmName, COUNT(n.nominationID) AS TotalNominations
+                    FROM film AS f LEFT JOIN nomination AS n
+                    ON f.filmID = n.filmID
+                    WHERE n.nominationID > 0
+                    GROUP BY f.title
+                    ORDER BY TotalNominations DESC;
+            """
+            cursor.execute(DB_usage) #use the specific database
+            cursor.execute(query)
+
+            results = cursor.fetchall()
+            # Determining the maximum length of the person names for formatting
+            if results:
+                max_length_person = max(len(row[0]) for row in results) + 2
+            else:
+                max_length_person = 0#default value if no results
+            print("Number of Nominations per Person:")
+            print("==============================================================")
+            print("|            Person Name         |Total Number of Nominations|")
+            print("==============================================================")
+            for rows in results:
+                print(f"| {rows[0]:<{max_length_person}} |          {rows[1]}          |")
+            print("==============================================================")
+        else:
+            print("Failed to connect to the database.")
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            # log
+            # print("MySQL connection is closed.")
+
+def average_duration_of_films_per_genre():
+    #Function to query average duration of films per genre
+
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+            cursor = connection.cursor()
+
+            query = """
+                    SELECT g.genreName, AVG(f.duration) AS AverageDuration
+                    FROM genre AS g LEFT JOIN filmgenre AS fg
+                    ON g.genreID = fg.genreID
+                    LEFT JOIN film AS f
+                    ON fg.filmID = f.filmID
+                    GROUP BY g.genreName
+                    ORDER BY AverageDuration DESC;
+            """
+            cursor.execute(DB_usage) #use the specific database
+            cursor.execute(query)
+
+            results = cursor.fetchall()
+
+            # Determining the maximum length of the genre names for formatting
+            if results:
+                max_length_genre = max(len(row[0]) for row in results) + 2
+            else:
+                max_length_genre = 0#default value if no results
+
+            print("Average Duration of Films per Genre:")
+            print("================================================")
+            print("|     Genre Name    | Average Duration (mins)  |")
+            print("================================================")
+            for rows in results:
+                print(f"| {rows[0]:<{max_length_genre}} |          {rows[1]:.2f}          |")
+            print("================================================")
+
+        else:
+            print("Failed to connect to the database.")
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            # log
+            # print("MySQL connection is closed.")
+
+def awards_given_out_by_festival_edition():
+    #Function to query awards given out by each festival edition
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+
+            cursor = connection.cursor()
+
+            query = """
+                    SELECT f.festivalName, fe.year, COUNT(n.nominationID) AS TotalAwardsGiven
+                    FROM festival AS f INNER JOIN festivalEdition AS fe
+                    ON f.festivalID = fe.festivalID
+                    LEFT JOIN nomination AS n
+                    ON fe.editionID = n.editionID AND n.isWinner = TRUE
+                    GROUP BY f.festivalName, fe.year
+                    ORDER BY fe.year DESC , TotalAwardsGiven DESC;
+            """
+
+            cursor.execute(DB_usage) #use the specific database
+            cursor.execute(query)
+            results = cursor.fetchall()
+
+            # Determining the maximum length of the festival names for formatting
+            if results:
+                max_length_festival = max(len(row[0]) for row in results) + 2
+            else:
+                max_length_festival = 0#default value if no results
+
+            print("Awards Given Out by Each Festival Edition:")
+            print("============================================================================")
+            print("|             Festival Name            | Edition Year | Total Awards Given |")
+            print("============================================================================")
+            for rows in results:
+                print(f"| {rows[0]:<{max_length_festival}} |     {rows[1]}     |         {rows[2]}         |")
+            print("============================================================================")
+        else:
+            print("Failed to connect to the database.")
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            # log
+            # print("MySQL connection is closed.")
+
+    

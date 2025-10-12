@@ -18,7 +18,14 @@ def Menu():
     print("-----------------------")
     print("6. Advanced-Query: Films and their Origin Country")
     print("7. Advanced-Query: All nominations with film, person and award details")
-    print("8. Exit")
+    print("8. Advanced-Query: Directors and their films")
+    print("9. Advanced-Query: Actors in a gicen film")
+    print("-----------------------")
+    print("10. Aggregate-Query: Total Number of Films per country")
+    print("11. Aggregate-Query: Number of nomination per film")
+    print("12. Aggregate-Query: Avarage duration of films per genre")
+    print("13. Aggregate-Query: Awards given out by each festival edition")
+    print("12. Exit")
     print("Please select an option (1-5): ")
     choice = int(input())
     
@@ -79,7 +86,44 @@ def switch_case_menu(choice, SQL_File):
         # Call the function to query all nominations with film, person and award details
         Queries.all_nominations_details()
         return False #continue the loop
+    
     elif choice == 8:
+        print("Query Directors and their films selected.")
+        # Call the function to query directors and their films
+        Queries.directors_and_their_films()
+        return False #continue the loop
+    
+    elif choice == 9:
+        input_film = input("Enter the film title to find actors in that film:")
+        # Call the function to query actors in the given film
+        Queries.actors_in_film(input_film)
+        return False #continue the loop
+    
+    elif choice == 10:
+        print("Query Total Number of Films per country selected.")
+        # Call the function to query total number of films per country
+        Queries.total_number_of_films_per_country()
+        return False #continue the loop
+    
+    elif choice == 11:
+        print("Query Number of nomination per film selected.")
+        # Call the function to query number of nominations per person
+        Queries.number_of_nominations_per_film()
+        return False #continue the loop
+    
+    elif choice == 12:
+        print("Query Avarage duration of films per genre selected.")
+        # Call the function to query average duration of films per genre
+        Queries.average_duration_of_films_per_genre()
+        return False #continue the loop
+    
+    elif choice == 13:
+        print("Query Awards given out by each festival edition selected.")
+        # Call the function to query awards given out by each festival edition
+        Queries.awards_given_out_by_festival_edition()
+        return False #continue the loop
+    
+    elif choice == 14:
         print("Exiting the program. Goodbye!")
         return True #exit the loop
     else:

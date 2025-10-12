@@ -19,7 +19,7 @@ DB_CONFIG = {
 
 # 2. Place all your CSV files in a single folder and update the path below.
 # replace it with the file path to the dataset folder
-CSV_BASE_PATH = './dataset_builder/FinalDatasets/'
+CSV_BASE_PATH = './FinalDatasets/'
 
 # Dictionary mapping table names to their corresponding CSV files.
 CSV_FILES = {
