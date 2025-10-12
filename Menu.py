@@ -11,8 +11,8 @@ def Menu():
     print("Menu Options:")
     print("0. CREATE DATABASE & INSERT DATA")
     print("1. Insert data into the database")
-    print("2. Query All films and their release year")
-    print("3. Delete data from the database")
+    print("2. Query: All films and their release year")
+    print("3. Query: Find all persons born after a given year")
     print("5. Exit")
     print("Please select an option (1-5): ")
     choice = int(input())
@@ -46,9 +46,10 @@ def switch_case_menu(choice, SQL_File):
         return False #continue the loop
     
     elif choice == 3:
-        print("Delete data from the database selected.")
-        # Call the function to delete data
-        # delete_data()
+        input_year = int(input("Enter the year to find persons born after that year: "))
+
+        Queries.people_born_after_year(input_year)
+        return False #continue the loop
     elif choice == 4:
         print("Update data in the database selected.")
         # Call the function to update data

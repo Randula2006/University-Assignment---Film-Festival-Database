@@ -55,3 +55,44 @@ def Films_and_years():
             # print("MySQL connection is closed.")
         
     return
+
+def people_born_after_year(year):
+    #Function to query all persons born after a give year by the user
+
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+            cursor = connection.cursor()
+
+            query = "SELECT fullName, YEAR(birthDate) AS birthYear FROM person WHERE YEAR(birthDate) > %s ORDER BY birthYear ;"
+
+            cursor.execute(DB_usage) #use the specific database
+            cursor.execute(query, (year,)) #tuple with single value
+            results = cursor.fetchall()
+
+            # Determining the maximum length of the full names for formatting
+            if results:
+                max_length_name = max(len(row[0]) for row in results) + 2
+            else:
+                max_length_name = 0#default value if no results
+
+            print(f"Persons born after {year}:")
+            print("===========================================")
+            print("|          FullName        |  Birth Year  |")
+            print("===========================================")
+
+            for rows in results:
+                print(f"| {rows[0]:<{max_length_name}} |     {rows[1]}     |")
+            print("===========================================")
+        else:
+            print("Failed to connect to the database.")
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            # log
+            # print("MySQL connection is closed.")
+        
