@@ -1,4 +1,5 @@
 import Database_creation
+import Queries
 
 def Menu():
     print("----------------------")
@@ -10,9 +11,8 @@ def Menu():
     print("Menu Options:")
     print("0. CREATE DATABASE & INSERT DATA")
     print("1. Insert data into the database")
-    print("2. Query data from the database")
+    print("2. Query All films and their release year")
     print("3. Delete data from the database")
-    print("4. Update data in the database")
     print("5. Exit")
     print("Please select an option (1-5): ")
     choice = int(input())
@@ -33,14 +33,18 @@ def switch_case_menu(choice, SQL_File):
         # Call the function to create the database and insert data
         Database_creation.create_database(SQL_File)
         Database_creation.insert_data_into_db()
+        return False #continue the loop
 
     elif choice == 1:
         print("Insert data into the database selected.")
 
     elif choice == 2:
-        print("Query data from the database selected.")
-        # Call the function to query data
-        # query_data()
+        print("Query All films and their release year selected.")
+        print("--------------------------------------------------------------------------")
+        # Call the function to query films and their release years
+        Queries.Films_and_years()
+        return False #continue the loop
+    
     elif choice == 3:
         print("Delete data from the database selected.")
         # Call the function to delete data
@@ -52,5 +56,7 @@ def switch_case_menu(choice, SQL_File):
     elif choice == 5:
         print("Exiting the program.")
         exit(0)
+        return True #exit the loop
     else:
         print("Invalid choice. Please select a valid option (1-5).")
+        return False #continue the loop

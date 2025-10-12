@@ -7,9 +7,12 @@ import Menu
 SQL_File = 'createTables.sql' 
 
 def main():
-    #handle menu system
-    userInput = Menu.Menu()
-    Menu.switch_case_menu(userInput , SQL_File)
+    isExit = False
+
+    while (not isExit):
+        #handle menu system
+        userInput = Menu.Menu()
+        isExit = Menu.switch_case_menu(userInput , SQL_File)
 
 if __name__ == '__main__':
     main()
