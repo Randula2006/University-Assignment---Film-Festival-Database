@@ -56,6 +56,9 @@ def switch_case_menu(choice, SQL_File):
         Database_creation.insert_data_into_db()
         Database_creation.create_view_AllWinners()
         Database_creation.create_view_FilmSummary()
+        Database_creation.alter_film_table()
+        Database_creation.Trigger_after_nomination_insert()
+        Database_creation.Trigger_prevent_winner_deletion()
         return False #continue the loop
 
     elif choice == 1:

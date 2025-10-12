@@ -260,3 +260,119 @@ def create_view_FilmSummary():
     except Error as e:
         print(f"Error creating view: {e}")
 
+
+# Triggers
+def alter_film_table():
+    #Function to alter the Film table to add a new column 'rating'.
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+            cursor = connection.cursor()
+
+            # Use the specific database
+            DB_usage = f"USE {DB_CONFIG['database']};"
+            cursor.execute(DB_usage)
+
+            # Define the SQL for altering the table
+            query = "ALTER TABLE film ADD COLUMN nomination_count INT NOT NULL DEFAULT 0;"
+
+            cursor.execute(query)
+            connection.commit()
+            print("-Column 'rating' added to 'Film' table successfully.")
+            cursor.close()
+            connection.close() # close the connection
+        
+    except Error as e:
+        print(f"Error altering table: {e}")
+
+def Trigger_after_nomination_insert():
+    #Function to create a trigger that updates the nomination_count in the Film table after a new nomination is inserted.
+    
+    
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+            cursor = connection.cursor()
+
+            # Use the specific database
+            DB_usage = f"USE {DB_CONFIG['database']};"
+            cursor.execute(DB_usage)
+
+            # Drop the trigger if it already exists
+            delete_query = "DROP TRIGGER IF EXISTS update_nomination_count;"
+            cursor.execute(delete_query)
+
+            # Define the SQL for creating the trigger
+            query = """
+                    DELIMITER $$
+                    CREATE TRIGGER after_nomination_insert
+                    AFTER INSERT ON nomination
+                    FOR EACH ROW
+                    BEGIN
+                        UPDATE film
+                        SET nomination_count = nomination_count + 1
+                        WHERE filmID = NEW.filmID;
+                    END;
+                        $$
+                    DELIMITER ;
+                    """
+
+            cursor.execute(query)
+            connection.commit()
+            print("-Trigger 'after_nomination_insert' created successfully.")
+            cursor.close()
+            connection.close() # close the connection
+        
+    except Error as e:
+        print(f"Error creating trigger: {e}")
+
+def Trigger_prevent_winner_deletion():
+    #Function to create a trigger that prevents deletion of nominations marked as winners.
+    
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+            cursor = connection.cursor()
+
+            # Use the specific database
+            DB_usage = f"USE {DB_CONFIG['database']};"
+            cursor.execute(DB_usage)
+
+            # Drop the trigger if it already exists
+            delete_query = "DROP TRIGGER IF EXISTS prevent_winner_deletion;"
+            cursor.execute(delete_query)
+
+            # Define the SQL for creating the trigger
+            query = """
+                    DELIMITER $$
+                    CREATE TRIGGER prevent_winner_deletion
+                    BEFORE DELETE ON nomination
+                    FOR EACH ROW
+                    BEGIN
+                    -- old refers to the row that about to be deleted
+                    -- we check the isWinner column of that row
+
+                        IF OLD.isWinner = TRUE THEN
+                            -- if the nomination is a winner, we raise an error to prevent deletion
+                            -- we set a custom error message to inform the user about the reason
+                            SIGNAL SQLSTATE '45000'
+                            SET MESSAGE_TEXT = 'Cannot delete a nomination that is marked as a winner.';
+                        END IF;
+                    END;
+                    $$
+                    DELIMITER ;
+                    """
+
+            cursor.execute(query)
+            connection.commit()
+            print("-Trigger 'prevent_winner_deletion' created successfully.")
+            cursor.close()
+            connection.close() # close the connection
+        
+    except Error as e:
+        print(f"Error creating trigger: {e}")
+
+
