@@ -36,8 +36,7 @@ CREATE TABLE Person(
     countryID INT,
     FOREIGN KEY (countryID) REFERENCES Country(countryID)
         ON DELETE SET NULL -- if a country is deleted, the countryID in Person is set to NULL
-        ON UPDATE CASCADE, -- if a countryID is updated, all its persons are updated too 
-    INDEX (fullName) -- to speed up searches by name
+        ON UPDATE CASCADE -- if a countryID is updated, all its persons are updated too 
 );
 
 -- film festivals (Main festival information)
@@ -62,8 +61,7 @@ CREATE TABLE Film(
     PRIMARY KEY (filmID),
     FOREIGN KEY (countryID) REFERENCES Country(countryID)
         ON DELETE SET NULL -- if a country is deleted, the countryID in Film is set to NULL
-        ON UPDATE CASCADE, -- if a countryID is updated, all its films are updated too   
-    INDEX (title) -- to speed up searches by title
+        ON UPDATE CASCADE -- if a countryID is updated, all its films are updated too   
 );
 
 -- Festival editions (Each year a festival is held, it is considered a new edition)

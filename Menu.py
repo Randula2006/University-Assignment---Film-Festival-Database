@@ -36,8 +36,11 @@ def Menu():
     print("20. View: Show Summery of Films")
     print("-----------------------")
     print("21. Procedure: Get Person Award History")
-    print("18. Exit")
-    print("Please select an option (1-5): ")
+    print("22. Procedure: Insert Full Nomination")
+    print("23. Procedure: Update Winner Status")
+    print("24. Procedure: Delete Festival Edition")
+    print("15. Exit")
+    print("Please select an option (0-25): ")
     choice = int(input())
     
     if (type(choice) is not int) and (choice < 1 or choice > 5 or choice is None):
@@ -56,6 +59,7 @@ def switch_case_menu(choice, SQL_File):
         # Call the function to create the database and insert data
         Database_creation.create_database(SQL_File)
         Database_creation.insert_data_into_db()
+        Database_creation.create_indexes()
         Database_creation.create_view_AllWinners()
         Database_creation.create_view_FilmSummary()
         Database_creation.alter_film_table()
@@ -63,6 +67,8 @@ def switch_case_menu(choice, SQL_File):
         Database_creation.Trigger_prevent_winner_deletion()
         Database_creation.procedure_getPersonAwardHistory()
         Database_creation.procedure_InsertFullNomination()
+        Database_creation.procedure_updateWinnerStatus()
+        Database_creation.procedure_deleteFestivalEdition()
         return False #continue the loop
 
     elif choice == 1:
@@ -189,9 +195,59 @@ def switch_case_menu(choice, SQL_File):
         Queries.get_person_award_history(input_person)
         return False #continue the loop
     
-    elif choice == 18:
+    elif choice == 22:
+        print("Procedure: Insert Full Nomination selected.")
+        # Call the function to execute the stored procedure to insert a full nomination
+                    # Collecting all necessary inputs from the user
+        film_title = input("Enter Film Title: ")
+        film_duration = int(input("Enter Film Duration (in minutes): "))
+        film_release_year = int(input("Enter Film Release Year (e.g., 2023): "))
+        person_name = input("Enter Director's Full Name: ")
+        person_birthdate = input("Enter Director's Birth Date (YYYY-MM-DD): ")
+        person_country = input("Enter Director's Country: ")
+        person_countryCode = input("Enter Director's Country Code (e.g., US, FR): ")
+
+        award_name = input("Enter Award Name: ")
+        festival_name = input("Enter Festival Name: ")
+        festival_country = input("Enter Festival Country: ")
+        festival_countryCode = input("Enter Festival Country Code (e.g., US, FR): ")
+        edition_ceromany_num = int(input("Enter Festival Edition Ceromany Number (e.g., 75): "))
+        edition_year = int(input("Enter Festival Edition Year (e.g., 2023): "))
+        edition_start_date = input("Enter Festival Edition Start Date (YYYY-MM-DD): ")
+        edition_end_date = input("Enter Festival Edition End Date (YYYY-MM-DD): ")
+        is_winner_input = input("Is this nomination a winner? (yes/no): ").strip().lower()
+
+        Queries.insert_full_nomination(film_title, film_release_year, film_duration,
+                                       person_name, person_birthdate, person_country, person_countryCode,
+                                       award_name, festival_name, festival_country, festival_countryCode,
+                                       edition_year, edition_ceromany_num, edition_start_date, edition_end_date,
+                                       is_winner_input)
+        
+        return False #continue the loop
+    
+    elif choice == 23:
+        print("Procedure: Update Winner Status selected.")
+        film_title = input("Enter the film title of the nomination: ")
+        award_name = input("Enter the award name of the nomination: ")
+        festival_name = input("Enter the festival name of the nomination: ")
+        edition_year = int(input("Enter the edition year of the nomination (e.g., 2023): "))
+        person_name = input("Enter the person's full name associated with the nomination: ")
+        new_status_input = input("Enter the new winner status (yes/no): ").strip().lower()
+
+        Queries.update_winner_status(film_title, award_name, festival_name, edition_year, person_name, new_status_input)
+        return False #continue the loop
+    
+    elif choice == 24:
+        print("Procedure: Delete Festival Edition selected.")
+        festival_name = input("Enter the festival name of the edition you want to delete: ")
+        edition_year = int(input("Enter the year of the edition you want to delete (e.g., 2023): "))
+        Queries.delete_festival_edition(festival_name, edition_year)
+        return False #continue the loop
+    
+    elif choice == 25:
         print("Exiting the program. Goodbye!")
         return True #exit the loop
+    
     else:
         print("Invalid choice. Please select a valid option (1-5).")
         return False #continue the loop
