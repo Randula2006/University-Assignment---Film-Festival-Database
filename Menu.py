@@ -2,9 +2,9 @@ import Database_creation
 import Queries
 
 def Menu():
-    print("----------------------")
-    print("Film festival Database")
-    print("----------------------\n")
+    print("-------------------------------------")
+    print("Welcome to the Film festival Database")
+    print("-------------------------------------\n")
     
     print("If you are a new user, first choose option 0 to create the database and insert data.")
     print("-----------------------")
@@ -39,7 +39,7 @@ def Menu():
     print("22. Procedure: Insert Full Nomination")
     print("23. Procedure: Update Winner Status")
     print("24. Procedure: Delete Festival Edition")
-    print("15. Exit")
+    print("25. Exit")
     print("Please select an option (0-25): ")
     choice = int(input())
     

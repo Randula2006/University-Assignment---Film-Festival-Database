@@ -459,6 +459,10 @@ def procedure_getPersonAwardHistory():
     except Error as e:
         print(f"Error creating procedure: {e}")
 
+#Citation:-
+# Title :- Creating a Stored Procedure with Multiple Inserts and Conditional Logic in MySQL
+# Author :- Gemini Pro
+# Date :- 2025/10/12
 def procedure_InsertFullNomination():
     connection = mysql.connector.connect(**DB_CONFIG)
 
@@ -598,6 +602,7 @@ def procedure_InsertFullNomination():
             connection.close() # close the connection
     except Error as e:
         print(f"Error creating procedure: {e}")
+
 
 def procedure_updateWinnerStatus():
     connection = mysql.connector.connect(**DB_CONFIG)
