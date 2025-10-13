@@ -375,4 +375,203 @@ def Trigger_prevent_winner_deletion():
     except Error as e:
         print(f"Error creating trigger: {e}")
 
+#procedures
+def procedure_getPersonAwardHistory():
+    connection = mysql.connector.connect(**DB_CONFIG)
+
+    try:
+        if connection.is_connected():
+            
+            cursor = connection.cursor()
+
+            # Use the specific database
+            DB_usage = f"USE {DB_CONFIG['database']};"
+            cursor.execute(DB_usage)
+            # Drop the procedure if it already exists
+            delete_query = "DROP PROCEDURE IF EXISTS GetPersonAwardHistory;"
+            cursor.execute(delete_query)
+
+            # Define the SQL for creating the procedure
+            query = """
+                    DELIMITER $$
+                    CREATE PROCEDURE GetPersonAwardHistory(
+                        IN person_name VARCHAR(100)
+                    )
+
+                    BEGIN
+                        SELECT 
+                            f.title AS FilmTitle,
+                            a.awardName AS AwardName,
+                            fe.festivalName AS FestivalName,
+                            feE.year AS EditionYear,
+
+                            CASE
+                                WHEN n.isWinner = TRUE THEN 'Winner'
+                                ELSE 'Nominee'
+                            END AS Status
+                        FROM person AS p
+                        JOIN nomination AS n ON p.personID = n.personID
+                        JOIN film AS f ON n.filmID = f.filmID
+                        JOIN award AS a ON n.awardID = a.awardID
+                        JOIN festivalEdition AS feE ON n.editionID = feE.editionID
+                        JOIN festival AS fe ON feE.festivalID = fe.festivalID
+                        WHERE p.fullName = person_name
+                        ORDER BY feE.year DESC;
+
+                    END $$
+                    DELIMITER ;
+                    """
+            
+            cursor.execute(query)
+            connection.commit()
+            print("-Procedure 'GetPersonAwardHistory' created successfully.")
+            cursor.close()
+            connection.close() # close the connection
+    except Error as e:
+        print(f"Error creating procedure: {e}")
+
+def procedure_InsertFullNomination():
+    connection = mysql.connector.connect(**DB_CONFIG)
+
+    try:
+        if connection.is_connected():
+            cursor = connection.cursor()
+
+            # Use the specific database
+            DB_usage = f"USE {DB_CONFIG['database']};"
+            cursor.execute(DB_usage)
+
+            # Drop the procedure if it already exists
+            delete_query = "DROP PROCEDURE IF EXISTS InsertFullNomination;"
+            cursor.execute(delete_query)
+
+            # Define the SQL for creating the procedure
+            query = """
+                    DELIMITER $$
+                    CREATE PROCEDURE InsetFullNomination(
+                        --Film details
+                        IN in_filmTitle VARCHAR(255),
+                        IN in_releaseYear INT,
+                        In in_duration INT,
+
+                        --Person details (can be null for film only awards)
+                        IN in_personName VARCHAR(100),
+                        IN in_birthDate DATE,
+                        IN in_personCountry VARCHAR(100),
+                        In in_personCountryCode VARCHAR(3),
+
+                        --Award festival and edition details
+                        IN in_awardName VARCHAR(100),
+                        IN in_festivalName VARCHAR(100),
+                        In in_festivalCountry VARCHAR(100),
+                        In in_festivalCountryCode VARCHAR(3),
+                        IN in_editionYear INT,
+                        IN in_EditionCeromanyNumber INT,
+                        In in_editionStartDate DATE,
+                        In in_editionEndDate DATE,
+
+                        --Nomination details
+                        In is_winner BOOLEAN
+
+                        --output a message to indicate success or failure
+                        OUT in_message VARCHAR(255)
+                    )  
+
+                    BEGIN
+                        --declare variable to hold the foreign keys needed for the nomination table
+                        DECLARE v_filmID INT;
+                        DECLARE v_personID INT;
+                        DECLARE v_awardID INT;
+                        DECLARE v_editionID INT;
+                        DECLARE v_festivalID INT;
+                        DECLARE v_personCountryID INT;
+                        DECLARE v_festivalCountryID INT;
+
+
+                        --check if the film is already in the film table
+                        SELECT filmID INTO v_filmID FROM film WHERE title = in_filmTitle LIMIT 1;
+
+                        --if not found insert the film , (v_filmID will be null)
+                        IF v_filmID IS NULL THEN
+                            INSERT INTO film (title, releaseYear, duration) 
+                            VALUES (in_filmTitle, in_releaseYear, in_duration);
+                            SET v_filmID = LAST_INSERT_ID();
+                        END IF;
+
+                        --check if the person is already in the person table (if noly the name is provided)
+                        IF in_personName IS NOT NULL AND in_personName != '' THEN
+                            SELECT countryID INTO v_personCountryID FROM country WHERE countryName = in_personCountry LIMIT 1;
+
+                            IF v_personCountryID IS NULL AND in_personCountry IS NOT NULL AND in_personCountry != '' THEN
+                                INSERT INTO country (countryName, countryCode)
+                                VALUES (in_personCountry, in_personCountryCode);
+                                SET v_personCountryID = LAST_INSERT_ID();
+                            END IF;
+
+                            --now find and insert the person
+                            SELECT personID INTO v_personID FROM person WHERE fullName = in_personName LIMIT 1;
+                            IF v_personID IS NULL THEN
+                                INSERT INTO person (fullName, birthDate, countryID)
+                                VALUES (in_personName, in_birthDate, v_personCountryID);
+                                SET v_personID = LAST_INSERT_ID();
+                            END IF;
+                        ELSE
+                            SET v_personID = NULL; -- No person involved in this nomination
+                        END IF;
+
+                        --Find and create the award
+                        SELECT awardID INTO v_awardID FROM award WHERE awardName = in_awardName LIMIT 1;
+                        IF v_awardID IS NULL THEN
+                            INSERT INTO award (awardName) VALUES (in_awardName);
+                            SET v_awardID = LAST_INSERT_ID();
+                        END IF;
+
+                        --Find and create the festival and its country
+                        SELECT countryID INTO v_festivalCountryID FROM country WHERE countryName = in_festivalCountry LIMIT 1;
+                        IF v_festivalCountryID IS NULL THEN
+                            INSERT INTO country (countryName, countryCode)
+                            VALUES (in_festivalCountry, in_festivalCountryCode);
+                            SET v_festivalCountryID = LAST_INSERT_ID();
+                        END IF;
+
+                        --Find or create the festival
+                        SELECT festivalID INTO v_festivalID FROM festival WHERE festivalName = in_festivalName LIMIT 1;
+                        IF v_festivalID IS NULL THEN
+                            INSERT INTO festival (festivalName, countryID)
+                            VALUES (in_festivalName, v_festivalCountryID);
+                            SET v_festivalID = LAST_INSERT_ID();
+                        END IF;
+
+                        --Find or create the festival edition
+                        SELECT editionID INTO v_editionID FROM festivalEdition 
+                        WHERE festivalID = v_festivalID AND year = in_editionYear LIMIT 1;
+                        IF v_editionID IS NULL THEN
+                            INSERT INTO festivalEdition (festivalID, year, ceromanyNumber, startDate, endDate)
+                            VALUES (v_festivalID, in_editionYear, in_EditionCeromanyNumber, in_editionStartDate, in_editionEndDate);
+                            SET v_editionID = LAST_INSERT_ID();
+                        END IF;
+
+                        --Insert the final nomination record
+                        INSERT INTO nomination (editionID, awardID, filmID, personID, isWinner)
+                        VALUES (v_editionID, v_awardID, v_filmID, v_personID, is_winner);
+
+                        --set a success message
+                        SET out_message = CONCAT('Nomination for ''', in_filmTitle, ''' created successfully.');
+                    END $$
+                    DELIMITER ;
+
+
+"""
+
+            cursor.execute(query)
+            connection.commit()
+            print("-Procedure 'InsertFullNomination' created successfully.")
+            cursor.close()
+            connection.close() # close the connection
+    except Error as e:
+        print(f"Error creating procedure: {e}")
+
+
+
+
 

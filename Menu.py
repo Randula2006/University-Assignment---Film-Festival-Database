@@ -34,6 +34,8 @@ def Menu():
     print("-----------------------")
     print("19. View: Show all Winners")
     print("20. View: Show Summery of Films")
+    print("-----------------------")
+    print("21. Procedure: Get Person Award History")
     print("18. Exit")
     print("Please select an option (1-5): ")
     choice = int(input())
@@ -59,6 +61,8 @@ def switch_case_menu(choice, SQL_File):
         Database_creation.alter_film_table()
         Database_creation.Trigger_after_nomination_insert()
         Database_creation.Trigger_prevent_winner_deletion()
+        Database_creation.procedure_getPersonAwardHistory()
+        Database_creation.procedure_InsertFullNomination()
         return False #continue the loop
 
     elif choice == 1:
@@ -180,6 +184,12 @@ def switch_case_menu(choice, SQL_File):
         return False #continue the loop
     
     elif choice == 21:
+        input_person = input("Enter the person's name to get their award history: ")
+        # Call the function to execute the stored procedure to get person's award history
+        Queries.get_person_award_history(input_person)
+        return False #continue the loop
+    
+    elif choice == 18:
         print("Exiting the program. Goodbye!")
         return True #exit the loop
     else:

@@ -898,5 +898,51 @@ def show_summary_of_films():
             # log
             # print("MySQL connection is closed.")
 
+def get_person_award_history(person_name):
+    #Function to execute the stored procedure to get person's award history
+
+    try:
+        connection = mysql.connector.connect(**DB_CONFIG)
+
+        if connection.is_connected():
+            cursor = connection.cursor()
+
+            cursor.execute(DB_usage) #use the specific database
+            cursor.callproc('GetPersonAwardHistory', [person_name])
+            results = []
+            for result in cursor.stored_results():
+                results = result.fetchall()
+
+            # Determining the maximum length of the film titles and award names for formatting
+            if results:
+                max_length_film = max(len(row[0]) for row in results) + 2
+                max_length_award = max(len(row[1]) for row in results) + 2
+            else:
+                max_length_film = 0#default value if no results
+                max_length_award = 0#default value if no results
+
+
+            print(f"Award History for '{person_name}':")
+            print("===============================================================")
+            print("|             Film Name               |        Award Name        |")
+            print("===============================================================")
+            for rows in results:
+                print(f"| {rows[0]:<{max_length_film}} | {rows[1]:<{max_length_award}} |")
+            print("===============================================================")
+        
+        else:
+            print("Failed to connect to the database.")
+
+            
+    except Error as e:
+        print(f"Error while connecting to MySQL: {e}")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            # log
+            # print("MySQL connection is closed.")
+
+
 
 
