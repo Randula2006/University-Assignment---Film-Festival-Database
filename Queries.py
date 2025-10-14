@@ -350,7 +350,7 @@ def actors_in_film(film_title):
                     ON fa.personID = p.personID
                     INNER JOIN film AS f
                     ON fa.filmID = f.filmID
-                    WHERE f.title = %s;
+                    WHERE f.title LIKE CONCAT('%', %s, '%');
                 """
             
             cursor.execute(DB_usage) #use the specific database
@@ -440,7 +440,7 @@ def number_of_nominations_per_film():
                     FROM film AS f LEFT JOIN nomination AS n
                     ON f.filmID = n.filmID
                     WHERE n.nominationID > 0
-                    GROUP BY f.title
+                    GROUP BY f.title, f.filmID
                     ORDER BY TotalNominations DESC;
             """
             cursor.execute(DB_usage) #use the specific database
@@ -449,15 +449,15 @@ def number_of_nominations_per_film():
             results = cursor.fetchall()
             # Determining the maximum length of the person names for formatting
             if results:
-                max_length_person = max(len(row[0]) for row in results) + 2
+                max_length_titel = max(len(row[0]) for row in results) + 2
             else:
-                max_length_person = 0#default value if no results
-            print("Number of Nominations per Person:")
+                max_length_titel = 0#default value if no results
+            print("Number of Nominations per film:")
             print("==============================================================")
-            print("|            Person Name         |Total Number of Nominations|")
+            print("|            film Name         |Total Number of Nominations|")
             print("==============================================================")
             for rows in results:
-                print(f"| {rows[0]:<{max_length_person}} |          {rows[1]}          |")
+                print(f"| {rows[0]:<{max_length_titel}} |          {rows[1]}          |")
             print("==============================================================")
         else:
             print("Failed to connect to the database.")
@@ -480,11 +480,12 @@ def average_duration_of_films_per_genre():
             cursor = connection.cursor()
 
             query = """
-                    SELECT g.genreName, AVG(f.duration) AS AverageDuration
+                    SELECT g.genreName, COALESCE(AVG(f.duration), 0) AS AverageDuration
                     FROM genre AS g LEFT JOIN filmgenre AS fg
                     ON g.genreID = fg.genreID
                     LEFT JOIN film AS f
                     ON fg.filmID = f.filmID
+                    WHERE f.duration > 0
                     GROUP BY g.genreName
                     ORDER BY AverageDuration DESC;
             """
@@ -528,13 +529,13 @@ def awards_given_out_by_festival_edition():
             cursor = connection.cursor()
 
             query = """
-                    SELECT f.festivalName, fe.year, COUNT(n.nominationID) AS TotalAwardsGiven
+                    SELECT f.festivalName, fe.year, COUNT(CASE WHEN n.isWinner = TRUE THEN n.nominationID END) AS TotalAwardsGiven
                     FROM festival AS f INNER JOIN festivalEdition AS fe
                     ON f.festivalID = fe.festivalID
                     LEFT JOIN nomination AS n
-                    ON fe.editionID = n.editionID AND n.isWinner = TRUE
+                    ON fe.editionID = n.editionID
                     GROUP BY f.festivalName, fe.year
-                    ORDER BY fe.year DESC , TotalAwardsGiven DESC;
+                    ORDER BY fe.year DESC;
             """
 
             cursor.execute(DB_usage) #use the specific database

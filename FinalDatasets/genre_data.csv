@@ -1,20 +1,25 @@
 genreID,genreName
-1,Drama
-2,Crime
-3,Action
-4,Thriller
+1,Crime
+2,Action
+3,Fantasy
+4,Science Fiction
 5,Comedy
-6,Science Fiction
+6,Drama
 7,Adventure
-8,Romance
-9,Fantasy
-10,Horror
-11,Mystery
-12,Historical
-13,Documentary
-14,War
-15,Western
-16,Animation
-17,Absurdist
-18,Biography
-19,Musical
+8,Animation
+9,Family
+10,Western
+11,Romance
+12,Thriller
+13,Horror
+14,Mystery
+15,History
+16,War
+17,Music
+18,Documentary
+19,Foreign
+20,TV Movie
+21,Biopic
+22,Musical
+23,Film-noir
+24,Sport

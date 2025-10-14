@@ -2,6 +2,8 @@ import Database_creation
 import Queries
 
 def Menu():
+    # Function to display the menu and get user choice.
+    
     print("-------------------------------------")
     print("Welcome to the Film festival Database")
     print("-------------------------------------\n")
@@ -41,11 +43,15 @@ def Menu():
     print("24. Procedure: Delete Festival Edition")
     print("25. Exit")
     print("Please select an option (0-25): ")
-    choice = int(input())
-    
-    if (type(choice) is not int) and (choice < 1 or choice > 5 or choice is None):
-        print("Invalid choice. Please select a valid option (1-5).")
+    try:
+        choice = int(input())
+    except ValueError:
+        print("Invalid input. Please enter a number.")
         return Menu()
+    
+    if choice < 0 or choice > 25:
+        print("Invalid choice. Please select a valid option (0-25).")
+        return Menu() #recursion until valid input
     
     return choice
 
