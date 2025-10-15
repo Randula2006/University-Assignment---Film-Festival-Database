@@ -3,7 +3,6 @@ import csv
 from mysql.connector import Error
 import os
 from dotenv import load_dotenv
-import Menu
 
 # Load environment variables from .env file
 load_dotenv()
@@ -99,14 +98,13 @@ def insert_data(cursor, table_name, columns, file_path, custom_processor=None):
         print(f"An error occurred while inserting data into '{table_name}': {e}")
 
 def nomination_processor(row):
-    """
-    Custom processor for the Nomination table. This function is robust and
-    explicitly converts every column to its correct data type to prevent errors.
-    """
+    
+    # Custom processor for the Nomination table. This function is robust and
+    # explicitly converts every column to its correct data type to prevent errors.
+  
     # Unpack the row of strings from the CSV file
     nominationID_str, editionID_str, awardID_str, filmID_str, personID_str, isWinner_str = row
     
-    # --- FIX FOR ALL COLUMNS ---
     
     # Convert all ID columns to integers
     nominationID = int(nominationID_str)
@@ -128,7 +126,6 @@ def nomination_processor(row):
     
     # Return the fully processed and correctly typed row as a tuple
     return (nominationID, editionID, awardID, filmID, personID, isWinner)
-
 
 def create_database(fileName):
     try:
@@ -217,7 +214,7 @@ def insert_data_into_db():
     return
 
 def run_sql_command(command, success_message):
-    """Helper function to connect, run a single command, commit, and close."""
+    # Helper function to connect, run a single command, commit, and close.
     connection = None
     try:
         connection = mysql.connector.connect(**DB_CONFIG)
@@ -239,7 +236,7 @@ def run_sql_command(command, success_message):
 def create_indexes():
     #Function to create indexes on the database tables.
     run_sql_command("CREATE INDEX idx_film_title ON Film(title);", "-Index on Film(title) created.")
-    run_sql_command("CREATE INDEX idx_person_fullName ON Person(fullName);", "-Index on Person(fullName) created.")
+    run_sql_command("CREATE INDEX idx_person_fullName ON Person(fullName);", "-Index on Person(fullName) created.\n")
 
 
 #Views
@@ -257,7 +254,7 @@ def create_view_AllWinners():
     INNER JOIN festival AS fe ON feE.festivalID = fe.festivalID
     WHERE n.isWinner = TRUE;
     """
-    run_sql_command(view_query, "-View 'AllWinners' created successfully.")
+    run_sql_command(view_query, "-View 'AllWinners' created successfully.\n")
 
 def create_view_FilmSummary():
     #Function to create a SQL view in the database.
@@ -270,7 +267,7 @@ def create_view_FilmSummary():
     FROM film AS f LEFT JOIN nomination AS n ON f.filmID = n.filmID
     GROUP BY f.filmID, f.title;
     """
-    run_sql_command(view_query, "-View 'FilmSummary' created successfully.")
+    run_sql_command(view_query, "-View 'FilmSummary' created successfully.\n")
 
 
 # Triggers
@@ -279,7 +276,7 @@ def alter_film_table():
     try:
         run_sql_command(
             "ALTER TABLE film ADD COLUMN nomination_count INT NOT NULL DEFAULT 0;",
-            "-Column 'nomination_count' added to 'Film' table successfully."
+            "-Column 'nomination_count' added to 'Film' table successfully.\n"
         )
     except Error as e:
         # Catch specific error if column already exists and print a friendlier message
@@ -301,7 +298,7 @@ def Trigger_after_nomination_insert():
         WHERE filmID = NEW.filmID;
     END
     """
-    run_sql_command(trigger_query, "-Trigger 'after_nomination_insert' created successfully.")
+    run_sql_command(trigger_query, "-Trigger 'after_nomination_insert' created successfully.\n")
 
 def Trigger_prevent_winner_deletion():
     #Function to create a trigger that prevents deletion of nominations marked as winners.
@@ -321,7 +318,7 @@ def Trigger_prevent_winner_deletion():
         END IF;
     END
     """
-    run_sql_command(trigger_query, "-Trigger 'prevent_winner_deletion' created successfully.")
+    run_sql_command(trigger_query, "-Trigger 'prevent_winner_deletion' created successfully.\n")
 
 
 #procedures
@@ -349,124 +346,111 @@ def procedure_getPersonAwardHistory():
         ORDER BY feE.year DESC;
     END
     """
-    run_sql_command(proc_query, "-Procedure 'GetPersonAwardHistory' created successfully.")
-
-
-#Citation:-
-# Title :- Creating a Stored Procedure with Multiple Inserts and Conditional Logic in MySQL
-# Author :- Gemini Pro
-# Date :- 2025/10/12
-def procedure_InsertFullNomination():
-    run_sql_command("DROP PROCEDURE IF EXISTS InsertFullNomination;", "-Dropped procedure 'InsertFullNomination' if it exists.")
-    proc_query = """
-    CREATE PROCEDURE InsertFullNomination(
-        -- Film details
-        IN in_filmTitle VARCHAR(255), IN in_releaseYear INT, IN in_duration INT,
-        -- Person details (can be null for film only awards)
-        IN in_personName VARCHAR(100), IN in_birthDate DATE, IN in_personCountry VARCHAR(100), IN in_personCountryCode VARCHAR(3),
-        -- Award festival and edition details
-        IN in_awardName VARCHAR(100), IN in_festivalName VARCHAR(100), IN in_festivalCountry VARCHAR(100), IN in_festivalCountryCode VARCHAR(3),
-        IN in_editionYear INT, IN in_EditionCeremonyNumber INT, IN in_editionStartDate DATE, IN in_editionEndDate DATE,
-        -- Nomination details
-        IN is_winner BOOLEAN,
-        -- output a message to indicate success or failure
-        OUT out_message VARCHAR(255)
-    )  
-    BEGIN
-        -- declare variable to hold the foreign keys needed for the nomination table
-        DECLARE v_filmID, v_personID, v_awardID, v_editionID, v_festivalID, v_personCountryID, v_festivalCountryID INT;
-        -- check if the film is already in the film table
-        SELECT filmID INTO v_filmID FROM film WHERE title = in_filmTitle LIMIT 1;
-        -- if not found insert the film , (v_filmID will be null)
-        IF v_filmID IS NULL THEN INSERT INTO film (title, releaseYear, duration) VALUES (in_filmTitle, in_releaseYear, in_duration); SET v_filmID = LAST_INSERT_ID(); END IF;
-        -- check if the person is already in the person table (if only the name is provided)
-        IF in_personName IS NOT NULL AND in_personName != '' THEN
-            SELECT countryID INTO v_personCountryID FROM country WHERE countryName = in_personCountry LIMIT 1;
-            IF v_personCountryID IS NULL AND in_personCountry IS NOT NULL AND in_personCountry != '' THEN INSERT INTO country (countryName, countryCode) VALUES (in_personCountry, in_personCountryCode); SET v_personCountryID = LAST_INSERT_ID(); END IF;
-            SELECT personID INTO v_personID FROM person WHERE fullName = in_personName LIMIT 1;
-            IF v_personID IS NULL THEN INSERT INTO person (fullName, birthDate, countryID) VALUES (in_personName, in_birthDate, v_personCountryID); SET v_personID = LAST_INSERT_ID(); END IF;
-        ELSE SET v_personID = NULL; END IF; -- No person involved in this nomination
-        -- Find and create the award
-        SELECT awardID INTO v_awardID FROM award WHERE awardName = in_awardName LIMIT 1;
-        IF v_awardID IS NULL THEN INSERT INTO award (awardName) VALUES (in_awardName); SET v_awardID = LAST_INSERT_ID(); END IF;
-        -- Find and create the festival and its country
-        SELECT countryID INTO v_festivalCountryID FROM country WHERE countryName = in_festivalCountry LIMIT 1;
-        IF v_festivalCountryID IS NULL THEN INSERT INTO country (countryName, countryCode) VALUES (in_festivalCountry, in_festivalCountryCode); SET v_festivalCountryID = LAST_INSERT_ID(); END IF;
-        -- Find or create the festival
-        SELECT festivalID INTO v_festivalID FROM festival WHERE festivalName = in_festivalName LIMIT 1;
-        IF v_festivalID IS NULL THEN INSERT INTO festival (festivalName, countryID) VALUES (in_festivalName, v_festivalCountryID); SET v_festivalID = LAST_INSERT_ID(); END IF;
-        -- Find or create the festival edition
-        SELECT editionID INTO v_editionID FROM festivalEdition WHERE festivalID = v_festivalID AND year = in_editionYear LIMIT 1;
-        IF v_editionID IS NULL THEN INSERT INTO festivalEdition (festivalID, year, ceremonyNumber, startDate, endDate) VALUES (v_festivalID, in_editionYear, in_EditionCeremonyNumber, in_editionStartDate, in_editionEndDate); SET v_editionID = LAST_INSERT_ID(); END IF;
-        -- Insert the final nomination record
-        INSERT INTO nomination (editionID, awardID, filmID, personID, isWinner) VALUES (v_editionID, v_awardID, v_filmID, v_personID, is_winner);
-        -- set a success message
-        SET out_message = CONCAT('Nomination for ''', in_filmTitle, ''' created successfully.');
-    END
-    """
-    run_sql_command(proc_query, "-Procedure 'InsertFullNomination' created successfully.")
-
+    run_sql_command(proc_query, "-Procedure 'GetPersonAwardHistory' created successfully.\n")
 
 def procedure_updateWinnerStatus():
     run_sql_command("DROP PROCEDURE IF EXISTS UpdateWinnerStatus;", "-Dropped procedure 'UpdateWinnerStatus' if it exists.")
     proc_query = """
     CREATE PROCEDURE UpdateWinnerStatus(
-        IN in_filmTitle VARCHAR(255), IN in_awardName VARCHAR(100), IN in_festivalName VARCHAR(100),
-        IN in_editionYear INT, IN in_personName VARCHAR(100), IN new_winner_status BOOLEAN,
+        IN in_filmTitle VARCHAR(255), 
+        IN in_awardName VARCHAR(100), 
+        IN in_festivalName VARCHAR(100),
+        IN in_editionYear INT, 
+        IN in_personName VARCHAR(100), 
+        IN new_winner_status BOOLEAN,
         OUT out_message VARCHAR(255)
     )
     BEGIN
         -- Declare variables to hold IDs found from the input parameters
         DECLARE v_nominationID, v_rowCount INT;
+
         -- Find the nominationID based on the provided details
+
         SELECT n.nominationID INTO v_nominationID
         FROM nomination AS n
-        JOIN film AS f ON n.filmID = f.filmID
-        JOIN award AS a ON n.awardID = a.awardID
-        JOIN festivalEdition AS feE ON n.editionID = feE.editionID
-        JOIN festival AS fe ON feE.festivalID = fe.festivalID
-        LEFT JOIN person AS p ON n.personID = p.personID
-        WHERE f.title = in_filmTitle AND a.awardName = in_awardName AND fe.festivalName = in_festivalName
-          AND feE.year = in_editionYear AND (in_personName IS NULL OR p.fullName = in_personName)
+            JOIN film AS f ON n.filmID = f.filmID
+            JOIN award AS a ON n.awardID = a.awardID
+            JOIN festivalEdition AS feE ON n.editionID = feE.editionID
+            JOIN festival AS fe ON feE.festivalID = fe.festivalID
+            LEFT JOIN person AS p ON n.personID = p.personID
+
+        WHERE 
+            f.title = in_filmTitle 
+            AND a.awardName = in_awardName 
+            AND fe.festivalName = in_festivalName
+            AND feE.year = in_editionYear 
+            AND (
+                    in_personName IS NULL 
+                    OR p.fullName = in_personName
+            )
         LIMIT 1;
+
         -- if matching nomination is found, update its winner status
+
         IF v_nominationID IS NOT NULL THEN
-            UPDATE nomination SET isWinner = new_winner_status WHERE nominationID = v_nominationID;
+
+            UPDATE nomination 
+                SET isWinner = new_winner_status 
+                WHERE  
+                    nominationID = v_nominationID;
             SELECT ROW_COUNT() INTO v_rowCount;
-            IF v_rowCount > 0 THEN SET out_message = 'Nomination winner status updated successfully.';
-            ELSE SET out_message = 'No changes made to the nomination winner status.'; END IF;
-        ELSE SET out_message = 'No matching nomination found with the provided details.'; END IF;
+            
+            IF v_rowCount > 0 THEN 
+                SET out_message = 'Nomination winner status updated successfully.';
+            ELSE 
+                SET out_message = 'No changes made to the nomination winner status.'; 
+            END IF;
+
+        ELSE 
+            SET out_message = 'No matching nomination found with the provided details.'; 
+        END IF;
+
     END
     """
-    run_sql_command(proc_query, "-Procedure 'UpdateWinnerStatus' created successfully.")
+    run_sql_command(proc_query, "-Procedure 'UpdateWinnerStatus' created successfully.\n")
 
 def procedure_deleteFestivalEdition():
     run_sql_command("DROP PROCEDURE IF EXISTS DeleteFestivalEdition;", "-Dropped procedure 'DeleteFestivalEdition' if it exists.")
+    
     proc_query = """
     CREATE PROCEDURE DeleteFestivalEdition(
-        IN in_festivalName VARCHAR(100), IN in_editionYear INT,
+        IN in_festivalName VARCHAR(100), 
+        IN in_editionYear INT,
         OUT out_message VARCHAR(255)
     )
     BEGIN
         -- Declare Variables
         DECLARE v_editionID, v_rowCount INT;
+
         -- Find the editionID based on the provided festival name and year
+
         SELECT feE.editionID INTO v_editionID
-        FROM festivalEdition AS feE
-        JOIN festival AS fe ON feE.festivalID = fe.festivalID
-        WHERE fe.festivalName = in_festivalName AND feE.year = in_editionYear
+            FROM festivalEdition AS feE
+                JOIN festival AS fe ON feE.festivalID = fe.festivalID
+            WHERE fe.festivalName = in_festivalName AND feE.year = in_editionYear
         LIMIT 1;
+
         -- If the edition is found, proceed to delete
+
         IF v_editionID IS NOT NULL THEN
-            DELETE FROM festivalEdition WHERE editionID = v_editionID;
+            DELETE FROM festivalEdition 
+            WHERE editionID = v_editionID;
+
             -- check row count to see if a row was actually deleted
+
             SELECT ROW_COUNT() INTO v_rowCount;
-            IF v_rowCount > 0 THEN SET out_message = CONCAT('Festival edition ', in_festivalName, ' ', in_editionYear, ' deleted successfully.');
-            ELSE SET out_message = 'No festival edition was deleted.'; END IF;
-        ELSE SET out_message = 'No matching festival edition found with the provided details.'; END IF;
+                IF v_rowCount > 0 THEN 
+                    SET out_message = CONCAT('Festival edition ', in_festivalName, ' ', in_editionYear, ' deleted successfully.');
+                ELSE 
+                    SET out_message = 'No festival edition was deleted.'; 
+                END IF;
+
+        ELSE 
+            SET out_message = 'No matching festival edition found with the provided details.'; 
+        END IF;
     END
     """
-    run_sql_command(proc_query, "-Procedure 'DeleteFestivalEdition' created successfully.")
+    run_sql_command(proc_query, "-Procedure 'DeleteFestivalEdition' created successfully.\n")
 
 
-    
+# Made by Randula Gunathilake

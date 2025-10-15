@@ -944,75 +944,6 @@ def get_person_award_history(person_name):
             # log
             # print("MySQL connection is closed.")
 
-def insert_full_nomination(film_title, film_release_year,film_duration, 
-                           person_name, person_birthdate, person_country, person_countryCode,
-                           awad_name, fetival_name, festival_country, festival_countryCode,
-                           edition_year, edition_ceromany_num,edition_start_date, edition_end_date,
-                           is_winner_input):
-    #Function to execute the stored procedure to insert a full nomination
-
-    try:
-        connection = mysql.connector.connect(**DB_CONFIG)
-
-        if connection.is_connected():
-
-            cursor = connection.cursor()
-
-
-
-            is_winner = True if is_winner_input == 'yes' else False
-            out_message = ""
-            cursor.execute(DB_usage) #use the specific database
-            args = [film_title, film_release_year, film_duration,
-                    person_name, person_birthdate, person_country, person_countryCode,
-                    awad_name, fetival_name, festival_country, festival_countryCode,
-                    edition_year, edition_ceromany_num, edition_start_date, edition_end_date,
-                    is_winner, out_message]
-            
-            result_args = cursor.callproc('InsertFullNomination', args)
-
-            print(result_args[-1]) # Output the message from the stored procedure
-        else:
-            print("Failed to connect to the database.")
-    except Error as e:
-        print(f"Error while connecting to MySQL: {e}")
-    finally:
-        if connection.is_connected():
-            cursor.close()
-            connection.close()
-            # log
-            # print("MySQL connection is closed.")
-
-def update_winner_status(filmTitle, awardName, festivalName, editionYear, personName,is_winner_input):
-    #Function to execute the stored procedure to update winner status of a nomination
-
-    try:
-        connection = mysql.connector.connect(**DB_CONFIG)
-
-        if connection.is_connected():
-
-            cursor = connection.cursor()
-
-            is_winner = True if is_winner_input == 'yes' else False
-            out_message = ""
-            cursor.execute(DB_usage) #use the specific database
-            args = [filmTitle, awardName, festivalName, editionYear, personName, is_winner, out_message]
-            
-            result_args = cursor.callproc('UpdateWinnerStatus', args)
-
-            print(result_args[-1]) # Output the message from the stored procedure
-        else:
-            print("Failed to connect to the database.")
-        
-    except Error as e:
-        print(f"Error while connecting to MySQL: {e}")
-    finally:
-        if connection.is_connected():
-            cursor.close()
-            connection.close()
-            # log
-            # print("MySQL connection is closed.")
-
 def delete_festival_edition(festivalName, editionYear):
     #Function to execute the stored procedure to delete a festival edition
 
@@ -1044,3 +975,4 @@ def delete_festival_edition(festivalName, editionYear):
 
 
 
+# Made by Randula Gunathilake
